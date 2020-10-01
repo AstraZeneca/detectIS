@@ -1,0 +1,94 @@
+%Contents of listings-setup.tex
+\usepackage{graphics}
+\usepackage{listings}
+\usepackage{forloop}
+\usepackage{wrapfig}
+\usepackage{datetime}
+\usepackage{graphicx}
+% \usepackage[abspath]{currfile}
+
+%\graphicspath{{\currfileabsdir}}
+
+\newcounter{ct}
+\makeatletter
+% Since we don't want an initial comma in the list, we use \@gobble
+\def\optionslist{\@gobble}
+%  Using the counter ct, range its value from 0 to 191
+\forloop{ct}{0}{\value{ct} < 27}{%
+    % \edef expands the definition before it actually 
+    % binds the two.  Thus, \rlist expands like a chameleon's tongue.
+    \edef\optionslist{\optionslist,-\alph{ct}, -\Alph{ct}}
+  }
+
+
+\makeatother
+\def\listwithrs#1\relax{%
+	\lstdefinelanguage{ngs}{alsoletter={--,-,.,>,&},    % also: alsoletter
+}}
+\expandafter\listwithrs\optionslist\relax
+
+\usepackage{listings}
+\usepackage{upquote} %to force Latex not substitute ' by `
+
+\lstset{
+language=ngs,
+basicstyle=\ttfamily,
+keywordstyle=\color[rgb]{0.13,0.29,0.53}\bfseries,
+keywordstyle=[2]\color[rgb]{0.56,0.35,0.01}\bfseries,
+stringstyle=\color[rgb]{0.31,0.60,0.02},
+commentstyle=\color[rgb]{0.56,0.35,0.01}\itshape,
+numberstyle=\footnotesize,
+stepnumber=1,
+numbersep=5pt,
+backgroundcolor=\color[RGB]{248,248,248},
+showspaces=false,
+showstringspaces=false,
+showtabs=false,
+tabsize=2,
+captionpos=b,
+breaklines=true,
+breakatwhitespace=true,
+breakautoindent=true,
+escapeinside={\%*}{*)},
+linewidth=0.9\textwidth,
+basewidth=0.5em,
+columns=fullflexible
+}
+
+
+
+\newdateformat{monthyeardate}{\monthname[\THEMONTH], \THEYEAR}
+\newcommand*{\customrule}[1]{\textcolor{#1}{\rule{\textwidth}{1.5pt}}\par}
+
+\newcommand*{\titleAT}{%
+\begingroup 
+\newlength{\drop}
+\drop=0.1\textheight % White sapce generated is 10% of the total text height
+
+\customrule{blue}
+\customrule{blue}
+
+
+\vspace{\drop} 
+\centering 
+\textcolor[rgb]{0,1,0}{{\Huge detectIS}\\[0.5\baselineskip]} 
+
+\vspace{0.25\drop} 
+\rule{0.3\textwidth}{0.4pt}\par % Short horizontal line under the title
+\vspace{\drop}
+
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.4\columnwidth]{detectIS.png}
+\end{figure}
+
+
+\vfill 
+{\large \textsc{detectIS data analysis\\ 
+\monthyeardate\today }}\par % Publisher
+
+\vspace*{\drop} 
+\customrule{blue}
+\customrule{blue}
+\endgroup}
