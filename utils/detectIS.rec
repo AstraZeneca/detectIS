@@ -1,0 +1,98 @@
+BootStrap:docker
+From: ubuntu:18.04
+
+%help
+Singularity image for detectIS
+
+Create the img: sudo singularity build detectIS.simg detectIS.rec
+
+%runscript
+    exec echo "The runscript is the containers default runtime command!"
+
+%files
+
+%environment
+    VARIABLE=MEATBALLVALUE
+    export VARIABLE
+
+%labels
+   AUTHOR luigi.grassi@astrazeneca.com
+
+%post
+	apt-get update && apt-get install -y --no-install-recommends \
+        apt-utils \
+	sudo \
+	vim \
+	less \
+        build-essential \
+        curl \
+        git \
+	wget \
+	unzip \
+	locales \
+	default-jre \
+	g++ \
+	make \
+	libz-dev \
+	samtools \
+	bedtools \
+	python \
+	python-dev \
+	python-pip \
+	cmake \
+	mailutils \
+	texlive-latex-extra \
+	texlive-fonts-recommended \
+	lmodern \
+	libx11-dev \
+	libbz2-dev
+	apt-get clean
+
+	#tex fonts
+	wget http://mirrors.ctan.org/macros/latex/contrib/iftex/ifluatex.sty
+	mv ifluatex.sty /usr/share/texmf/tex/generic
+	wget http://mirrors.ctan.org/macros/latex/contrib/framed.zip
+	unzip framed.zip
+	mv framed /usr/share/texmf/tex/latex
+	texhash
+	
+	#minimap2
+	sudo wget --no-check-certificate https://github.com/lh3/minimap2/releases/download/v2.17/minimap2-2.17_x64-linux.tar.bz2
+	tar -jxf minimap2-2.17_x64-linux.tar.bz2
+	cd minimap2-2.17_x64-linux
+	sudo mv k8 paftools.js minimap2 /usr/bin
+	cd ..
+	sudo rm -rf  minimap2-2.12_x64-linux
+	sudo chmod a+x /usr/bin/k8 
+	sudo chmod a+x /usr/bin/paftools.js
+	sudo chmod a+x /usr/bin/minimap2
+
+	#seqtk
+        wget --no-check-certificate https://github.com/lh3/seqtk/archive/v1.3.tar.gz
+        tar -xvf v1.3.tar.gz
+        cd seqtk-1.3
+        make install BINDIR=/usr/bin    
+        cd .
+	
+	#Pandoc
+	sudo wget --no-check-certificate https://github.com/jgm/pandoc/releases/download/2.9.1.1/pandoc-2.9.1.1-linux-amd64.tar.gz
+	tar -xzf pandoc-2.9.1.1-linux-amd64.tar.gz
+	cd pandoc-2.9.1.1/bin	
+	sudo chmod a+x pandoc
+	sudo chmod a+x pandoc-citeproc
+        sudo mv pandoc pandoc-citeproc /usr/bin
+	cd ../..
+	sudo rm -rf pandoc*
+	
+
+	#to avoid perl warnings
+    	locale-gen en_US.UTF-8
+	echo 20 > /proc/sys/vm/nr_hugepages
+
+    	#to avoid warnings on hpc/pbs
+    	mkdir -p /extra
+    	mkdir -p /xdisk
+    	mkdir -p /rsgrps
+    	mkdir -p /cm/shared
+	
+
