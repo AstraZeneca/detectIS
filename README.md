@@ -19,14 +19,14 @@ The analysis can be executed locally or in an HPC environment, in the latter sce
 
 ### Prerequisites
 
-The software required to run the tool are:
+The detectIS software requirements are:
 	- [Singularity](https://www.sylabs.io/docs/) V2.6 or higher.
 	- [Nextflow](https://www.nextflow.io/), the workflow has been developed and tested with version 0.32.0.4897 
 
 
 ### Creating a Singularity container
 
-A Singularity container with all the software is required to run the pipeline.
+A Singularity container with all the necessary software is required to run the pipeline.
 The image can be created by using the recipe (file: "detectIS.rec" contained in the  "utils" directory). Superuser privileges are necessary to generate a Singularity container with the command:
 
 ```
@@ -35,7 +35,7 @@ sudo singularity build detectIS.simg detectIS.rec
 
 N.B. superuser privileges are necessary only to create the container but no to use it. This means you can create the container in your local pc/workstation and copy it to the system where you run analyses (e.g. your hpc or cluster). 
 
-Alternatively, If you have problems in generating a Singularity container from the recipe you can download it from [Singularity Hub](https://singularity-hub.org/)  
+Alternatively, If you have problems in generating a Singularity container from the recipe you can download the image from [Singularity Hub](https://singularity-hub.org/)  
 
 
 ### Runnig the workflow
@@ -65,5 +65,4 @@ The configuration file and the bash script can be either used as a template for 
 
 ## Deployment
 
-Please notice that Singularity containers can be [kernel-dependent](https://www.sylabs.io/guides/2.6/user-guide/faq.html?highlight=disk%20access#are-singularity-containers-kernel-dependent), this implies that the image recipies contained in this project non necessarily will produce an image able to run on your HPC system. If none of them is compatible with your system you have to write a new one using an OS with compatible kernel.
-
+Please notice that Singularity containers can be [kernel-dependent](https://www.sylabs.io/guides/2.6/user-guide/faq.html?highlight=disk%20access#are-singularity-containers-kernel-dependent), this implies that the image recipies contained in this project will not necessarily produce an image able to run on your HPC system. If none of the available images is compatible with your system you might need to modify the recipe using an OS with compatible kernel, please raise an issue if this is the case and you need support for it.
