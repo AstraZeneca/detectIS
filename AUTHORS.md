@@ -6,6 +6,6 @@
 * [Colin Hardman](mailto:colin.hardman@astrazeneca.com)
 * [Diane Hatton](mailto:diane.hatton@astrazeneca.com)
 
-# Mantainer
+# Maintainer
 
 * [Luigi Grassi](https://github.com/luigra)
