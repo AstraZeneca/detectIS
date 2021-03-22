@@ -19,9 +19,10 @@ use Data::Dumper;
 use List::Util qw( min max );
 use Getopt::Long;
 
-my $message_text  = "detectIS usage:\nperl detectIS.pl -h1 name_mate1_gnm.paf -h2 name_mate2_gnm.paf -v1 name_mate1_vir.paf -v2 name_mate2_vir.paf -o name\n-h1:  Aln results of R1 on host genome\n-h2:  Aln results of R2 on host genome\n-v1:  Aln results of R1 on virus/plasmid\n-v2:  Aln results of R2 on virus/plasmid\n-o:  Output prefix\nExtra options -mqual [1] -ovlwind [0.05]\n-mqual: minimum mapping quality [default 1, min:0 max:60]\n-ovlwind:  Ovl tolerability window (fraction of the read length) [default 0.05, min:0 max:1]";
+my $message_text  = "detectIS usage:\nperl detectIS.pl -h1 name_mate1_gnm.paf -h2 name_mate2_gnm.paf -v1 name_mate1_vir.paf -v2 name_mate2_vir.paf -o name\n-h1:  Aln results of R1 on host genome\n-h2:  Aln results of R2 on host genome\n-v1:  Aln results of R1 on virus/plasmid\n-v2:  Aln results of R2 on virus/plasmid\n-o:  Output prefix\nExtra options -mqual [1] -ovlwind [0.05]\n-mqual: minimum mapping quality [default 1, min:0 max:60]\n-ovlwind:  Ovl tolerability window (fraction of the read length) [default 0.05, min:0 max:1]\n-mspr [default 2]";
 
 my $mqual=1 ;
+my $mspr=2 ;
 my $ovlwind=0.05 ;
 my $GNM1 = '' ;
 my $GNM2 = '' ;
@@ -29,7 +30,7 @@ my $PLSM1 = '' ;
 my $PLSM2 = '' ;
 my $OUTPREF = '' ;
 
-GetOptions ('mqual=i' => \$mqual, 'ovlwind=o' => \$ovlwind, 'h1=s' => \$GNM1, 'h2=s' => \$GNM2, 'v1=s'=> \$PLSM1, 'v2=s'=> \$PLSM2, 'o=s'=> \$OUTPREF) ;
+GetOptions ('mspr=i' => \$mspr, 'mqual=i' => \$mqual, 'ovlwind=o' => \$ovlwind, 'h1=s' => \$GNM1, 'h2=s' => \$GNM2, 'v1=s'=> \$PLSM1, 'v2=s'=> \$PLSM2, 'o=s'=> \$OUTPREF) ;
 
 ( $GNM1 ne '' && $GNM2 ne '' && $PLSM1 ne '' && $PLSM2 ne '' && $OUTPREF ne '') || die $message_text ;
 
@@ -48,7 +49,7 @@ open(OUT2, ">$OUTPREFTXT") || die "ERROR: not possible to open output file $OUTP
 print OUT1 '\\titleAT'."\n\n" ;
 print OUT1 '\\newpage'."\n\n" ;
 print OUT1 "# detectIS Results\n" ;
-print OUT1 "perl detectIS.pl -h1 $GNM1 -h2 $GNM2 -v1 $PLSM1 -v2 $PLSM2 -o $OUTPREF -mqual $mqual -ovlwind $ovlwind" ;
+print OUT1 "perl detectIS.pl -h1 $GNM1 -h2 $GNM2 -v1 $PLSM1 -v2 $PLSM2 -o $OUTPREF -mqual $mqual -ovlwind $ovlwind -mspr $mspr" ;
 print OUT1 "\n\n----\n\n\n" ;
 
 print OUT2 "IS\tTotSpReads\tR1R2SpReads\tR1SpReads\tR2SpReads\tChimReads\tSingleSplitRead\tInterval\n" ;
@@ -62,12 +63,12 @@ my $ishash1=DetectSpltR::verify_split_reads($splt1, $PLSM1, $ovlwind) ;
 my $ishash2=DetectSpltR::verify_split_reads($splt2, $PLSM2, $ovlwind) ;
 
 ###Merging the results from both reads and filtering by frequency
-my ($ca1, $ca2, $ca3) =GeneralTools::merge_split_pairs($ishash1, $ishash2) ;
+my ($ca1, $ca2, $ca3)=GeneralTools::merge_split_pairs($ishash1, $ishash2, $mspr) ;
 my %ishash=%$ca1; # Key1:IS -> Element: number of fragment/read supporting it
 my %isres=%$ca2; # Key1:IS -> Key2:Read_ID -> Element: Read_occurrence
 my %iscoord=%$ca3; # Key IS -> Element: @ 0[Plm_chr] 1[Plm_pos] 2[Host_chr] 3[Host_pos]
 
-if ( scalar (keys %ishash) > 0 ) { #Only one IS supported by more than 1 fragment/read
+if ( scalar (keys %ishash) > 0 ) { 
 	my $isfuss= DetectSpltR::verify_spreads_is($GNM1, $GNM2, $PLSM1, $PLSM2, \%isres, \%iscoord) ;
         my %hashres = %$isfuss;
 	foreach my $n(sort { $ishash{$b} <=> $ishash{$a} } keys %ishash) {
