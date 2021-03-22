@@ -52,6 +52,7 @@ sub merge_split_pairs
 {
         my $sp1 = $_[0];
         my $sp2 = $_[1];
+        my $ms = $_[2];
        	my %ish1=(); # Key1:IS -> Element: number of fragment/read supporting it
 	my %isr=(); # Key1:IS -> Key2:Read_ID -> Element: Read_occurrence
 	my %isc=(); # Key IS -> Element: @ 0[Plm_chr] 1[Plm_pos] 2[Host_chr] 3[Host_pos]
@@ -82,8 +83,8 @@ sub merge_split_pairs
 	foreach my $n(keys %isr) {
         	 $ish1{$n}=scalar (keys %{$isr{$n}}) ;
 	}
-	foreach my $n(keys %ish1) {  #Keeping IS with at least 2 supporting splt reads
-        	if ($ish1{$n} <2) {
+	foreach my $n(keys %ish1) {  #Keeping IS with at least ms supporting splt reads
+        	if ($ish1{$n} < $ms) {
                 	delete $ish1{$n} ;
                 	delete $isr{$n} ;
                 	delete $isc{$n} ;

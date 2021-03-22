@@ -29,7 +29,7 @@ sub detect_split_reads
                 chomp $line;
                 if (length ($line) >0) {
                         my @tmp =split("\t" , $line) ;
-			if ( ($blklist{$tmp[0]}==1) && ($tmp[10]<($tmp[1])) && ($tmp[11]>=$mq) ) { #&& ($tmp[10]==$tmp[9]) ) { #Filter to consider potentialSplit Reads: Univocally mapped; mapping lenght shorter than read length and MQal==60
+			if ( ($blklist{$tmp[0]}==1) && ($tmp[10]<($tmp[1])) && ($tmp[11]>=$mq) ) { #Filters to consider potential Split Reads: Univocally mapped; mapping lenght shorter than read length and Mapping Quality >= $mq
 				$spltreads{$tmp[0]}[0]=$tmp[2]; #First mapped pos
 				$spltreads{$tmp[0]}[1]=$tmp[3];	#Last mapped pos
 				$spltreads{$tmp[0]}[2]=$tmp[4]; #STRAND

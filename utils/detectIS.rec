@@ -38,6 +38,7 @@ Create the img: sudo singularity build detectIS.simg detectIS.rec
 	bedtools \
 	python \
 	python-dev \
+	parallel \
 	python-pip \
 	cmake \
 	mailutils \
@@ -48,10 +49,19 @@ Create the img: sudo singularity build detectIS.simg detectIS.rec
 	libbz2-dev
 	apt-get clean
 
+	locale-gen en_US.UTF-8
+
+        export LC_ALL=C.UTF-8
+        export LANG=C.UTF-8
+        echo 'export LC_ALL=C.UTF-8' >> $SINGULARITY_ENVIRONMENT
+        echo 'export LANG=C.UTF-8' >> $SINGULARITY_ENVIRONMENT
+        echo "export PATH=/usr/local:/usr/local/bin:$PATH" >> $SINGULARITY_ENVIRONMENT
+
+
 	#tex fonts
-	wget http://mirrors.ctan.org/macros/latex/contrib/iftex/ifluatex.sty
+	wget --no-check-certificate http://mirrors.ctan.org/macros/generic/iftex/ifluatex.sty
 	mv ifluatex.sty /usr/share/texmf/tex/generic
-	wget http://mirrors.ctan.org/macros/latex/contrib/framed.zip
+	wget --no-check-certificate  http://mirrors.ctan.org/macros/latex/contrib/framed.zip
 	unzip framed.zip
 	mv framed /usr/share/texmf/tex/latex
 	texhash
@@ -84,11 +94,6 @@ Create the img: sudo singularity build detectIS.simg detectIS.rec
 	cd ../..
 	sudo rm -rf pandoc*
 	
-
-	#to avoid perl warnings
-    	locale-gen en_US.UTF-8
-	echo 20 > /proc/sys/vm/nr_hugepages
-
     	#to avoid warnings on hpc/pbs
     	mkdir -p /extra
     	mkdir -p /xdisk
