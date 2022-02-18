@@ -42,9 +42,11 @@ chomp $PLSM2;
 
 my $OUTPREFMD=$OUTPREF.'.md' ;
 my $OUTPREFTXT=$OUTPREF.'.txt' ;
+my $OUTPREFSPREADTXT=$OUTPREF.'_SRlist.txt' ;
 
 open(OUT1, ">$OUTPREFMD") || die "ERROR: not possible to open output file $OUTPREFMD\n" ;
 open(OUT2, ">$OUTPREFTXT") || die "ERROR: not possible to open output file $OUTPREFTXT\n" ;
+open(OUT3, ">$OUTPREFSPREADTXT") || die "ERROR: not possible to open output file $OUTPREFSPREADTXT\n" ;
 
 print OUT1 '\\titleAT'."\n\n" ;
 print OUT1 '\\newpage'."\n\n" ;
@@ -53,6 +55,8 @@ print OUT1 "perl detectIS.pl -h1 $GNM1 -h2 $GNM2 -v1 $PLSM1 -v2 $PLSM2 -o $OUTPR
 print OUT1 "\n\n----\n\n\n" ;
 
 print OUT2 "IS\tTotSpReads\tR1R2SpReads\tR1SpReads\tR2SpReads\tChimReads\tSingleSplitRead\tInterval\n" ;
+
+print OUT3 "IS\tReadID\tSRType\n" ;
 
 ###Detect potential Split Reads in genomic hits
 my $splt1=DetectSpltR::detect_split_reads($GNM1, $mqual) ;
@@ -69,8 +73,9 @@ my %isres=%$ca2; # Key1:IS -> Key2:Read_ID -> Element: Read_occurrence
 my %iscoord=%$ca3; # Key IS -> Element: @ 0[Plm_chr] 1[Plm_pos] 2[Host_chr] 3[Host_pos]
 
 if ( scalar (keys %ishash) > 0 ) { 
-	my $isfuss= DetectSpltR::verify_spreads_is($GNM1, $GNM2, $PLSM1, $PLSM2, \%isres, \%iscoord) ;
+	my ($isfuss, $spreads) = DetectSpltR::verify_spreads_is($GNM1, $GNM2, $PLSM1, $PLSM2, \%isres, \%iscoord) ;
         my %hashres = %$isfuss;
+        my %hspreads = %$spreads;
 	foreach my $n(sort { $ishash{$b} <=> $ishash{$a} } keys %ishash) {
 		if (exists $hashres{$n}) {
 			print OUT1 "## $n\n" ;
@@ -81,6 +86,9 @@ if ( scalar (keys %ishash) > 0 ) {
 			print OUT1 "INTERVAL: $hashres{$n}{'INT'}\n";
 			print OUT1 "\n\n----\n\n\n" ;
 			print OUT2 "$n\t$totsplit\t$hashres{$n}{'R1R2'}\t$hashres{$n}{'R1'}\t$hashres{$n}{'R2'}\t$hashres{$n}{'CHIM'}\t$hashres{$n}{'RU'}\t$hashres{$n}{'INT'}\n" ;
+			foreach my $spr (keys %{$hspreads{$n}}) {
+				print OUT3 "$spr\t$n\t$hspreads{$n}{$spr}\n";
+			}
 		}
 	}
 }
@@ -136,3 +144,4 @@ else {
 
 close OUT1 ;
 close OUT2 ;
+close OUT3 ;
