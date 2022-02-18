@@ -293,6 +293,7 @@ sub verify_spreads_is
 	}
         close PAF4 ;
 	my $verifis=();
+	my $spreads=();
 	foreach my  $k (keys %{$ishash}) {
 		my $chim= scalar keys(%{$chmreads{$k}}) ;
 		my $R1R2=0;
@@ -302,15 +303,19 @@ sub verify_spreads_is
 		foreach my $r (keys %{$ishash->{$k}}) {
 			if ($readstats{$r}[0]==1 && $readstats{$r}[1]==1 && $readstats{$r}[2]==1 && $readstats{$r}[3]==1 && $readstats{$r}[4]==1 && $readstats{$r}[5]==1 && $readstats{$r}[6]==1 && $readstats{$r}[7]==1) {
 				$R1R2++ ;
+				$spreads{$k}{$r}="R1R2" ;
 			}
 			elsif ( ($readstats{$r}[0]==1 && $readstats{$r}[1]==1 && $readstats{$r}[2]==1 && $readstats{$r}[3]==1) && ( ($readstats{$r}[4]==1 && $readstats{$r}[6]==0) ||  ($readstats{$r}[4]==0 && $readstats{$r}[6]==1) ) ) {
                                 $R1++ ;
+				$spreads{$k}{$r}="R1" ;
                         }
 			elsif ( ($readstats{$r}[4]==1 && $readstats{$r}[5]==1 && $readstats{$r}[6]==1 && $readstats{$r}[7]==1) && ( ($readstats{$r}[0]==1 && $readstats{$r}[2]==0) || ($readstats{$r}[0]==0 && $readstats{$r}[2]==1) ) ) {
 				$R2++ ;
+				$spreads{$k}{$r}="R2" ;
 			}
 			else {
 				$R0++ ;
+				$spreads{$k}{$r}="R0" ;
 			}
 		}
 		if (exists $t2{$k} && $t1{$k} ) { 
@@ -335,7 +340,7 @@ sub verify_spreads_is
 		}
 	
 	}
-	return(\%verifis) ;
+	return(\%verifis, \%spreads) ;
 
 }
 
