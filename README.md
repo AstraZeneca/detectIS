@@ -66,3 +66,7 @@ The configuration file and the bash script can be either used as a template for 
 ## Deployment
 
 Please notice that Singularity containers can be [kernel-dependent](https://www.sylabs.io/guides/2.6/user-guide/faq.html?highlight=disk%20access#are-singularity-containers-kernel-dependent), this implies that the image recipies contained in this project will not necessarily produce an image able to run on your HPC system. If none of the available images is compatible with your system you might need to modify the recipe using an OS with compatible kernel, please raise an issue if this is the case and you need support for it.
+
+## Citation
+
+If you use detectIS in your research, please cite our latest [publication](https://doi.org/10.1093/bioinformatics/btab366).
