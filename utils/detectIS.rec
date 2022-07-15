@@ -41,7 +41,6 @@ Create the img: sudo singularity build detectIS.simg detectIS.rec
 	parallel \
 	python-pip \
 	cmake \
-	mailutils \
 	texlive-latex-extra \
 	texlive-fonts-recommended \
 	lmodern \
